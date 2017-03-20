@@ -1,5 +1,24 @@
 # Webserver LAMP - Ubuntu 14.04
 
+* Software
+    * Apache
+    * PHP
+    * MySQL
+    * PhpMyAdmin
+    * ACL
+    * Postfix
+    * SFTP
+    * Git and Composer
+* Security
+    * Apache
+    * PHP
+    * PhpMyAdmin
+* Users and Domains
+    * Create User
+    * Create Folders
+    * Create Virtual Host
+    * Create Backup
+
 ## Software
 
 ### Apache
@@ -10,7 +29,7 @@ $ sudo apt-get update
 $ sudo apt-get -y install apache2
 ```
 
-Active rewrite, headrs and ssl modules:
+Active rewrite, headers and ssl modules:
 ```
 $ sudo a2enmod rewrite
 $ sudo a2enmod headers
@@ -24,7 +43,7 @@ $ sudo service apache2 restart
 
 ### PHP
 
-Install PHP and modules:
+Install PHP and PHP modules:
 ```
 $ sudo apt-get update
 $ sudo apt-get -y install php5-mysql php5 libapache2-mod-php5 php5-mcrypt php5-cli php5-gd php5-curl php5-xcache
@@ -35,7 +54,7 @@ Open the *dir.conf* file:
 $ sudo nano /etc/apache2/mods-enabled/dir.conf
 ```
 
-Move the PHP index file above to the first position after the DirectoryIndex specification:
+Move the PHP index file above to the first position after the *DirectoryIndex* specification:
 ```
 <IfModule mod_dir.c>
     DirectoryIndex index.php index.html index.cgi index.pl index.xhtml index.htm
@@ -97,12 +116,14 @@ $ sudo service apache2 restart
 
 ### ACL
 
+Install ACL:
 ```
 $ sudo apt-get install acl
 ```
 
-### Mailutils
+### Postfix
 
+Install Postfix and follow the wizard:
 ```
 $ sudo apt-get install mailutils
 ```
@@ -125,7 +146,7 @@ Find *Subsystem*, comment it and add new:
 Subsystem sftp internal-sftp
 ```
 
-After ... add:
+After *UsePAM yes* add:
 ```
 Match Group sftp
 ChrootDirectory %h/domains/
@@ -152,8 +173,14 @@ $ sudo mv composer.phar /usr/local/bin/composer
 
 ### Apache
 
+Hide Apache Version and OS Identity
 ServerSignature Off
 ServerTokens Prod
+
+Disable Directory Listing
+<Directory /var/www/html>
+Options -Indexes
+</Directory>
 
 ### PHP
 
@@ -162,12 +189,10 @@ $ sudo nano /etc/apach2/conf-available/security.conf
 ```
 
 ```
-    ServerTokens Prod
-    ServerSignature Off
-    Header always append X-Frame-Options SAMEORIGIN
-    Header set X-XSS-Protection: "1; mode=block"
-    Header edit Set-Cookie ^(.*)$ $1;HttpOnly;Secure
-    Timeout 60
+Header always append X-Frame-Options SAMEORIGIN
+Header set X-XSS-Protection: "1; mode=block"
+Header edit Set-Cookie ^(.*)$ $1;HttpOnly;Secure
+Timeout 60
 ```
 
 ### PhpMyAdmin
@@ -224,7 +249,7 @@ Create domains folder in home user folder:
 $ mkdir /var/www/html/USERNAME/domains
 ```
 
-Create domain (EXAMPLE.COM) folder in domains folder:
+Create domain name (EXAMPLE.COM) folder in domains folder:
 ```
 $ mkdir /var/www/html/USERNAME/domains/EXAMPLE.COM
 ```
@@ -234,7 +259,7 @@ Create httpdocs, logs and backups folders in EXAMPLE.COM folder:
 $ mkdir -p /var/www/html/USERNAME/domains/EXAMPLE.COM/{httpdocs,logs,backups}
 ```
 
-Set permissions:
+Set permissions httpdocs folder with ACL:
 ```
 $ setfacl -R -m u:USERNAME:rwx /var/www/html/USERNAME/domains/EXAMPLE.COM/httpdocs
 $ setfacl -Rd -m u:USERNAME:rwx /var/www/html/USERNAME/domains/EXAMPLE.COM/httpdocs
@@ -242,7 +267,7 @@ $ setfacl -R -m g:www-data:rwx /var/www/html/USERNAME/domains/EXAMPLE.COM/httpdo
 $ setfacl -Rd -m g:www-data:rwx /var/www/html/USERNAME/domains/EXAMPLE.COM/httpdocs
 ```
 
-Create index.php file in httpdocs directory and set permissions:
+Create index.php file in httpdocs folder and set permissions:
 ```
 $ sudo touch /var/www/html/USERNAME/domains/EXAMPLE.COM/httpdocs/index.php
 $ echo "<?php echo '<h1>It\'s Works!</h1>'; ?>" > /var/www/html/USERNAME/domains/EXAMPLE.COM/httpdocs/index.php
