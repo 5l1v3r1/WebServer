@@ -10,6 +10,8 @@
     * SFTP
     * Git and Composer
 * Security
+    * SSL Certificates (not sure)
+    * SSL Certificates from Let's Encrypt (sure)
     * Apache
     * PHP
     * PhpMyAdmin
@@ -17,7 +19,6 @@
     * Create User
     * Create Folders
     * Create Virtual Host
-    * Create Backup
 
 ## Software
 
@@ -171,6 +172,46 @@ $ sudo mv composer.phar /usr/local/bin/composer
 
 ## Security
 
+### SSL Certificates (not sure)
+
+Create ssl folder:
+```
+$ sudo mkdir /etc/apache2/ssl
+```
+
+Create key following the wizard:
+```
+$ sudo openssl req -x509 -nodes -days 365 -newkey rsa:2048 -keyout /etc/apache2/ssl/apache.key -out /etc/apache2/ssl/apache.crt
+```
+
+### SSL Certificates from Let’s Encrypt (sure)
+
+Download the certbot-auto Let’s Encrypt client to the /usr/local/sbin directory
+```
+$ cd /usr/local/sbin
+$ sudo wget https://dl.eff.org/certbot-auto
+```
+
+Make the script executable by typing:
+```
+$ sudo chmod a+x /usr/local/sbin/certbot-auto
+```
+
+Run the certbot-auto command with:
+```
+$ certbot-auto --apache -d EXAMPLE.COM -d WWW.EXAMPLE.COM
+```
+
+Create a new job with:
+```
+$ sudo crontab -e
+```
+
+Include the following content:
+```
+30 2 * * 1 /usr/local/sbin/certbot-auto renew >> /var/log/le-renew.log
+```
+
 ### Apache
 
 Hide Apache Version and OS Identity
@@ -184,15 +225,35 @@ Options -Indexes
 
 ### PHP
 
+Open *php.ini* file:
 ```
-$ sudo nano /etc/apach2/conf-available/security.conf 
+$ sudo nano /etc/php5/apache2/php.ini 
 ```
 
+Set max filesize for upload file:
 ```
-Header always append X-Frame-Options SAMEORIGIN
-Header set X-XSS-Protection: "1; mode=block"
-Header edit Set-Cookie ^(.*)$ $1;HttpOnly;Secure
-Timeout 60
+post_max_size = 25M
+upload_max_filesize = 25M
+```
+
+Do not expose PHP error messages:
+```
+display_errors = Off
+```
+
+Restrict PHP Information Leakage:
+```
+expose_php = Off
+```
+
+Limit PHP access to file system:
+```
+open_basedir = "/var/www/html/"
+```
+
+Restart Apache:
+```
+$ sudo service apache2 restart
 ```
 
 ### PhpMyAdmin
@@ -276,4 +337,6 @@ $ sudo chown USERNAME:www-data /var/www/html/USERNAME/domains/EXAMPLE.COM/httpdo
 
 ### Create Virtual Host
 
-### Create Backup
+```
+
+```
