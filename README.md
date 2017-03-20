@@ -214,15 +214,6 @@ Include the following content:
 
 ### Apache
 
-Hide Apache Version and OS Identity
-ServerSignature Off
-ServerTokens Prod
-
-Disable Directory Listing
-<Directory /var/www/html>
-Options -Indexes
-</Directory>
-
 ### PHP
 
 Open *php.ini* file:
