@@ -4,20 +4,20 @@
     * [Apache](https://github.com/davidecesarano/config-webserver-lamp#apache)
     * [PHP](https://github.com/davidecesarano/config-webserver-lamp#php)
     * [MySQL](https://github.com/davidecesarano/config-webserver-lamp#mysql)
-    * PhpMyAdmin
-    * ACL
-    * Postfix
-    * SFTP
-    * Git and Composer
+    * [PhpMyAdmin](https://github.com/davidecesarano/config-webserver-lamp#phpmyadmin)
+    * [ACL](https://github.com/davidecesarano/config-webserver-lamp#acl)
+    * [Postfix](https://github.com/davidecesarano/config-webserver-lamp#postfix)
+    * [SFTP](https://github.com/davidecesarano/config-webserver-lamp#sftp)
+    * [Git and Composer](https://github.com/davidecesarano/config-webserver-lamp#git-and-composer)
 * Security
-    * SSL Certificates (not sure)
-    * SSL Certificates from Let's Encrypt (sure)
+    * [SSL Certificates (not sure)](https://github.com/davidecesarano/config-webserver-lamp#ssl-certificates-not-sure)
+    * [SSL Certificates from Let's Encrypt (sure)](https://github.com/davidecesarano/config-webserver-lamp#ssl-certificates-from-lets-encrypt-sure)
     * Apache
-    * PHP
-    * PhpMyAdmin
+    * [PHP](https://github.com/davidecesarano/config-webserver-lamp#php-1)
+    * [PhpMyAdmin](https://github.com/davidecesarano/config-webserver-lamp#phpmyadmin-1)
 * Users and Domains
-    * Create User
-    * Create Folders
+    * [Create User](https://github.com/davidecesarano/config-webserver-lamp#create-user)
+    * [Create Folders](https://github.com/davidecesarano/config-webserver-lamp#create-folders)
     * Create Virtual Host
 
 ## Software
