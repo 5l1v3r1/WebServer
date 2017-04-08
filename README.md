@@ -1,9 +1,9 @@
 # Webserver LAMP - Ubuntu 14.04
 
 * Software
-    * Apache
-    * PHP
-    * MySQL
+    * [Apache](https://github.com/davidecesarano/config-webserver-lamp#apache)
+    * [PHP](https://github.com/davidecesarano/config-webserver-lamp#php)
+    * [MySQL](https://github.com/davidecesarano/config-webserver-lamp#mysql)
     * PhpMyAdmin
     * ACL
     * Postfix
