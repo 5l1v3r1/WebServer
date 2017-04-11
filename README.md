@@ -365,6 +365,35 @@ $ sudo chown USERNAME:www-data /var/www/html/USERNAME/domains/EXAMPLE.COM/httpdo
 
 ### Create Virtual Host
 
+Create *example.com.conf* file:
+```
+$ sudo nano /etc/apache2/sites-available/example.com.conf
 ```
 
+Add:
+```
+<VirtualHost *:80>
+    ServerAdmin webmaster@localhost
+    ServerName example.com
+    ServerAlias www.example.com
+    DocumentRoot /var/www/html/USERNAME/domains/EXAMPLE.COM/httpdocs
+    ErrorLog /var/www/html/USERNAME/domains/EXAMPLE.COM/logs/error.log
+    CustomLog /var/www/html/USERNAME/domains/EXAMPLE.COM/logs/access.log combined
+    <Directory /var/www/html/USERNAME/domains/EXAMPLE.COM/httpdocs>
+        Options FollowSymLinks MultiViews
+        AllowOverride All
+        Order allow,deny
+        allow from al
+    </Directory>
+</VirtualHost>  
+```
+
+Active virtual host:
+```
+$ sudo a2ensite example.com
+```
+
+Restart Apache:
+```
+$ sudo service apache2 restart
 ```
