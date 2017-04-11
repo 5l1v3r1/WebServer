@@ -388,9 +388,9 @@ Add:
 </VirtualHost>  
 ```
 
-Active virtual host:
+Enable virtual host:
 ```
-$ sudo a2ensite example.com
+$ sudo a2ensite example.com.conf
 ```
 
 Restart Apache:
