@@ -214,6 +214,43 @@ Include the following content:
 
 ### Apache
 
+Open *security.conf* file:
+```
+$ sudo nano /etc/apache2/conf-available/security.conf
+```
+
+Hide Apache version:
+```
+ServerSignature Off
+ServerTokens Prod
+```
+
+Restart Apache:
+```
+$ sudo service apache2 restart
+```
+
+Open *apache2.conf* file:
+```
+sudo nano /etc/apache2/apache2.conf
+```
+
+Disable directory listing:
+```
+<Directory /var/www/html>
+   Options -Indexes
+</Directory>
+```
+
+Restrict access to directories with “Allow” and “Deny” options :
+```
+<Directory />
+   Options None
+   Order deny,allow
+   Deny from all
+</Directory>
+```
+
 ### PHP
 
 Open *php.ini* file:
