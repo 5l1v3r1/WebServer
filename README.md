@@ -12,13 +12,13 @@
 * Security
     * [SSL Certificates (not sure)](https://github.com/davidecesarano/config-webserver-lamp#ssl-certificates-not-sure)
     * [SSL Certificates from Let's Encrypt (sure)](https://github.com/davidecesarano/config-webserver-lamp#ssl-certificates-from-lets-encrypt-sure)
-    * Apache
+    * [Apache](https://github.com/davidecesarano/config-webserver-lamp#apache-1)
     * [PHP](https://github.com/davidecesarano/config-webserver-lamp#php-1)
     * [PhpMyAdmin](https://github.com/davidecesarano/config-webserver-lamp#phpmyadmin-1)
 * Users and Domains
     * [Create User](https://github.com/davidecesarano/config-webserver-lamp#create-user)
     * [Create Folders](https://github.com/davidecesarano/config-webserver-lamp#create-folders)
-    * Create Virtual Host
+    * [Create Virtual Host](https://github.com/davidecesarano/config-webserver-lamp#create-virtual-host)
 
 ## Software
 
