@@ -277,6 +277,7 @@ expose_php = Off
 Limit PHP access to file system:
 ```
 open_basedir = "/var/www/html/"
+upload_tmp_dir = "/var/tmp/"
 ```
 
 Restart Apache:
