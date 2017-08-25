@@ -5,6 +5,7 @@
     * [PHP](https://github.com/davidecesarano/config-webserver-lamp#php)
     * [MySQL](https://github.com/davidecesarano/config-webserver-lamp#mysql)
     * [PhpMyAdmin](https://github.com/davidecesarano/config-webserver-lamp#phpmyadmin)
+    * [ACL](https://github.com/davidecesarano/config-webserver-lamp#acl)
     * [Postfix](https://github.com/davidecesarano/config-webserver-lamp#postfix)
     * [SFTP](https://github.com/davidecesarano/config-webserver-lamp#sftp)
     * [Git and Composer](https://github.com/davidecesarano/config-webserver-lamp#git-and-composer)
@@ -113,6 +114,13 @@ Restart Apache:
 ```
 $ sudo service apache2 restart
 ```
+
+### ACL		
+ 		
+ Install ACL:		
+ ```		
+ $ sudo apt-get install acl		
+ ```
 
 ### Postfix
 
@@ -348,8 +356,18 @@ $ echo "<?php echo '<h1>It\'s Works!</h1>'; ?>" > /var/www/USERNAME/domains/EXAM
 ```
 
 Set permissions to httpdocs folder:
+
 ```
 $ chown -R USERNAME:www-data /var/www/USERNAME/domains/EXAMPLE.COM/httpdocs
+```
+
+Set the default user (USERNAME), default group (www-data), 775 permissions for folders and 664 permissions for files with ACL:
+
+```
+$ setfacl -R -m u:USERNAME:rwx /var/www/USERNAME/domains/EXAMPLE.COM/httpdocs
+$ setfacl -Rd -m u:USERNAME:rwx /var/www/USERNAME/domains/EXAMPLE.COM/httpdocs
+$ setfacl -R -m g:www-data:rwx /var/www/USERNAME/domains/EXAMPLE.COM/httpdocs
+$ setfacl -Rd -m g:www-data:rwx /var/www/USERNAME/domains/EXAMPLE.COM/httpdocs
 ```
 
 ### Create Virtual Host
