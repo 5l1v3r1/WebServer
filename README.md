@@ -5,7 +5,6 @@
     * [PHP](https://github.com/davidecesarano/config-webserver-lamp#php)
     * [MySQL](https://github.com/davidecesarano/config-webserver-lamp#mysql)
     * [PhpMyAdmin](https://github.com/davidecesarano/config-webserver-lamp#phpmyadmin)
-    * [ACL](https://github.com/davidecesarano/config-webserver-lamp#acl)
     * [Postfix](https://github.com/davidecesarano/config-webserver-lamp#postfix)
     * [SFTP](https://github.com/davidecesarano/config-webserver-lamp#sftp)
     * [Git and Composer](https://github.com/davidecesarano/config-webserver-lamp#git-and-composer)
@@ -113,13 +112,6 @@ $ sudo php5enmod mcrypt
 Restart Apache:
 ```
 $ sudo service apache2 restart
-```
-
-### ACL
-
-Install ACL:
-```
-$ sudo apt-get install acl
 ```
 
 ### Postfix
@@ -323,7 +315,7 @@ $ sudo service apache2 restart
 
 Create user, set home folder and add user to www-data and sftp groups:
 ```
-$ useradd -m -d /var/www/html/USERNAME -s /bin/false -g www-data -G sftp USERNAME
+$ useradd -m -d /var/www/USERNAME -s /bin/false -g www-data -G sftp USERNAME
 $ passwd USERNAME
 ```
 
@@ -331,37 +323,33 @@ $ passwd USERNAME
 
 Set root user and root group for home user folder:
 ```
-$ sudo chown root:root /var/www/html/USERNAME
+$ sudo chown root:root /var/www/USERNAME
 ```
 
 Create domains folder in home user folder:
 ```
-$ mkdir /var/www/html/USERNAME/domains
+$ mkdir /var/www/USERNAME/domains
 ```
 
 Create domain name (EXAMPLE.COM) folder in domains folder:
 ```
-$ mkdir /var/www/html/USERNAME/domains/EXAMPLE.COM
+$ mkdir /var/www/USERNAME/domains/EXAMPLE.COM
 ```
 
 Create httpdocs, logs and backups folders in EXAMPLE.COM folder:
 ```
-$ mkdir -p /var/www/html/USERNAME/domains/EXAMPLE.COM/{httpdocs,logs,backups}
-```
-
-Set permissions httpdocs folder with ACL:
-```
-$ setfacl -R -m u:USERNAME:rwx /var/www/html/USERNAME/domains/EXAMPLE.COM/httpdocs
-$ setfacl -Rd -m u:USERNAME:rwx /var/www/html/USERNAME/domains/EXAMPLE.COM/httpdocs
-$ setfacl -R -m g:www-data:rwx /var/www/html/USERNAME/domains/EXAMPLE.COM/httpdocs
-$ setfacl -Rd -m g:www-data:rwx /var/www/html/USERNAME/domains/EXAMPLE.COM/httpdocs
+$ mkdir -p /var/www/USERNAME/domains/EXAMPLE.COM/{httpdocs,logs,backups}
 ```
 
 Create index.php file in httpdocs folder and set permissions:
 ```
-$ sudo touch /var/www/html/USERNAME/domains/EXAMPLE.COM/httpdocs/index.php
-$ echo "<?php echo '<h1>It\'s Works!</h1>'; ?>" > /var/www/html/USERNAME/domains/EXAMPLE.COM/httpdocs/index.php
-$ sudo chown USERNAME:www-data /var/www/html/USERNAME/domains/EXAMPLE.COM/httpdocs/index.php
+$ sudo touch /var/www/USERNAME/domains/EXAMPLE.COM/httpdocs/index.php
+$ echo "<?php echo '<h1>It\'s Works!</h1>'; ?>" > /var/www/USERNAME/domains/EXAMPLE.COM/httpdocs/index.php
+```
+
+Set permissions to httpdocs folder:
+```
+$ chown -R USERNAME:www-data /var/www/USERNAME/domains/EXAMPLE.COM/httpdocs
 ```
 
 ### Create Virtual Host
@@ -377,10 +365,10 @@ Add:
     ServerAdmin webmaster@localhost
     ServerName example.com
     ServerAlias www.example.com
-    DocumentRoot /var/www/html/USERNAME/domains/EXAMPLE.COM/httpdocs
-    ErrorLog /var/www/html/USERNAME/domains/EXAMPLE.COM/logs/error.log
-    CustomLog /var/www/html/USERNAME/domains/EXAMPLE.COM/logs/access.log combined
-    <Directory /var/www/html/USERNAME/domains/EXAMPLE.COM/httpdocs>
+    DocumentRoot /var/www/USERNAME/domains/EXAMPLE.COM/httpdocs
+    ErrorLog /var/www/USERNAME/domains/EXAMPLE.COM/logs/error.log
+    CustomLog /var/www/USERNAME/domains/EXAMPLE.COM/logs/access.log combined
+    <Directory /var/www/USERNAME/domains/EXAMPLE.COM/httpdocs>
         Options FollowSymLinks MultiViews
         AllowOverride All
         Order allow,deny
