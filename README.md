@@ -19,6 +19,7 @@
     * [Create User](https://github.com/davidecesarano/config-webserver-lamp#create-user)
     * [Create Folders](https://github.com/davidecesarano/config-webserver-lamp#create-folders)
     * [Create Virtual Host](https://github.com/davidecesarano/config-webserver-lamp#create-virtual-host)
+    * [Create automatic Backup](#create-automatic-backup)
 
 ## Software
 
@@ -403,4 +404,45 @@ $ sudo a2ensite example.com.conf
 Restart Apache:
 ```
 $ sudo service apache2 restart
+```
+
+### Create automatic Backup
+
+In root folder create backup folder:
+
+```
+$ mkdir -p /root/sh/backup
+```
+
+In backup folder create *EXAMPLE.COM.sh* file:
+
+```
+$ sudo nano /root/sh/backup/example.com.sh
+```
+
+To create a weekly automatic backup add:
+
+```
+mysqldump -u USER -pPASSWORD DATABASENAME | gzip > /var/www/USERNAME/domains/EXAMPLE.COM/backups/database.sql.gz
+tar czf /var/www/USERNAME/domains/EXAMPLE.COM/backups/httpdocs_${DOMINIO}.tar.gz -C / var/www/html/$UTENTE/domains/$DOMINIO/httpdocs
+find /var/www/USERNAME/domains/EXAMPLE.COM/backups/httpdocs* -mtime +7 -exec rm {} \;
+find /var/www/USERNAME/domains/EXAMPLE.COM/backups/database* -mtime +7 -exec rm {} \;
+```
+
+Set permissions:
+
+```
+$ sudo chmod +x /root/sh/backup/EXAMPLE.COM.sh
+```
+
+Create crontab:
+
+```
+$ crontab -l
+```
+
+To create an automatic backup every Saturday at 4:00 am:
+
+```
+00 04 * * Sat /root/sh/backup/$DOMINIO.sh
 ```
