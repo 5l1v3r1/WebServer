@@ -414,7 +414,7 @@ In root folder create backup folder:
 $ mkdir -p /root/sh/backup
 ```
 
-In backup folder create *EXAMPLE.COM.sh* file:
+In backup folder create *example.com.sh* file:
 
 ```
 $ sudo nano /root/sh/backup/example.com.sh
@@ -424,7 +424,7 @@ To create a weekly automatic backup add:
 
 ```
 mysqldump -u USER -pPASSWORD DATABASENAME | gzip > /var/www/USERNAME/domains/EXAMPLE.COM/backups/database.sql.gz
-tar czf /var/www/USERNAME/domains/EXAMPLE.COM/backups/httpdocs_${DOMINIO}.tar.gz -C / var/www/html/$UTENTE/domains/$DOMINIO/httpdocs
+tar czf /var/www/USERNAME/domains/EXAMPLE.COM/backups/httpdocs.tar.gz -C / var/www/USERNAME/domains/EXAMPLE.COM/httpdocs
 find /var/www/USERNAME/domains/EXAMPLE.COM/backups/httpdocs* -mtime +7 -exec rm {} \;
 find /var/www/USERNAME/domains/EXAMPLE.COM/backups/database* -mtime +7 -exec rm {} \;
 ```
@@ -432,10 +432,10 @@ find /var/www/USERNAME/domains/EXAMPLE.COM/backups/database* -mtime +7 -exec rm 
 Set permissions:
 
 ```
-$ sudo chmod +x /root/sh/backup/EXAMPLE.COM.sh
+$ sudo chmod +x /root/sh/backup/example.com.sh
 ```
 
-Create crontab:
+Create a new job with:
 
 ```
 $ crontab -l
@@ -444,5 +444,5 @@ $ crontab -l
 To create an automatic backup every Saturday at 4:00 am:
 
 ```
-00 04 * * Sat /root/sh/backup/$DOMINIO.sh
+00 04 * * Sat /root/sh/backup/example.com.sh
 ```
