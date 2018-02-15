@@ -1,8 +1,8 @@
-# Webserver LAMP - Ubuntu 14.04
+# Webserver LAMP - Ubuntu 16.04
 
 * Software
     * [Apache](https://github.com/davidecesarano/config-webserver-lamp#apache)
-    * [PHP](https://github.com/davidecesarano/config-webserver-lamp#php)
+    * [PHP 7](https://github.com/davidecesarano/config-webserver-lamp#php)
     * [MySQL](https://github.com/davidecesarano/config-webserver-lamp#mysql)
     * [PhpMyAdmin](https://github.com/davidecesarano/config-webserver-lamp#phpmyadmin)
     * [ACL](https://github.com/davidecesarano/config-webserver-lamp#acl)
@@ -43,12 +43,14 @@ Restart Apache:
 $ sudo service apache2 restart
 ```
 
-### PHP
+### PHP 7
 
 Install PHP and PHP modules:
 ```
+$ sudo apt-get install software-properties-common
+$ sudo add-apt-repository ppa:ondrej/php
 $ sudo apt-get update
-$ sudo apt-get -y install php5-mysql php5 libapache2-mod-php5 php5-mcrypt php5-cli php5-gd php5-curl php5-xcache
+$ sudo apt install php7.1 libapache2-mod-php7.1 php7.1-common php7.1-mbstring php7.1-xmlrpc php7.1-soap php7.1-gd php7.1-xml php7.1-intl php7.1-mysql php7.1-cli php7.1-mcrypt php7.1-zip php7.1-curl
 ```
 
 Open the *dir.conf* file:
@@ -63,11 +65,10 @@ Move the PHP index file above to the first position after the *DirectoryIndex* s
 </IfModule>
 ```
 
-Create root directory and index.php file:
+Create index.php file:
 ```
-$ sudo mkdir /var/www/html/root
-$ sudo touch /var/www/html/root/index.php
-$ echo "<?php echo '<h1>It\'s Works!</h1>'; ?>" > /var/www/html/root/index.php
+$ sudo touch /var/www/html/index.php
+$ echo "<?php echo '<h1>It\'s Works!</h1>'; ?>" > /var/www/html/index.php
 ```
 
 Open the *000-default.conf* file:
@@ -79,13 +80,13 @@ Clear all and add:
 ```
 <VirtualHost *:80>
     ServerAdmin webmaster@localhost
-    DocumentRoot /var/www/html/root
+    DocumentRoot /var/www/html
     ErrorLog ${APACHE_LOG_DIR}/error.log
     CustomLog ${APACHE_LOG_DIR}/access.log combined
-    <Directory /var/www/html/root>
-        Options -Indexes -Includes
-        Order allow,deny
-        Allow from all
+    <Directory /var/www/html>
+         Options -Indexes +FollowSymLinks +MultiViews
+        AllowOverride All
+        Require all granted
     </Directory>
 </VirtualHost>  
 ```
@@ -275,12 +276,6 @@ Restrict PHP Information Leakage:
 expose_php = Off
 ```
 
-Limit PHP access to file system:
-```
-open_basedir = "/var/www/html/"
-upload_tmp_dir = "/var/tmp/"
-```
-
 Restart Apache:
 ```
 $ sudo service apache2 restart
@@ -396,7 +391,7 @@ Add:
     <Directory /var/www/USERNAME/domains/EXAMPLE.COM/httpdocs>
         Options -Indexes +FollowSymLinks +MultiViews
         AllowOverride All
-        Required all granted
+        Require all granted
     </Directory>
     
 </VirtualHost> 
