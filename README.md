@@ -381,19 +381,25 @@ $ sudo nano /etc/apache2/sites-available/example.com.conf
 Add:
 ```
 <VirtualHost *:80>
+    
     ServerAdmin webmaster@localhost
     ServerName example.com
     ServerAlias www.example.com
+    
     DocumentRoot /var/www/USERNAME/domains/EXAMPLE.COM/httpdocs
+    
     ErrorLog /var/www/USERNAME/domains/EXAMPLE.COM/logs/error.log
     CustomLog /var/www/USERNAME/domains/EXAMPLE.COM/logs/access.log combined
+    
+    php_admin_value open_basedir /var/www/USERNAME/domains/EXAMPLE.COM/httpdocs
+    
     <Directory /var/www/USERNAME/domains/EXAMPLE.COM/httpdocs>
-        Options FollowSymLinks MultiViews
+        Options -Indexes +FollowSymLinks +MultiViews
         AllowOverride All
-        Order allow,deny
-        allow from al
+        Required all granted
     </Directory>
-</VirtualHost>  
+    
+</VirtualHost> 
 ```
 
 Enable virtual host:
