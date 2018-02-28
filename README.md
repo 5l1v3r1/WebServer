@@ -383,6 +383,34 @@ Add:
 </VirtualHost> 
 ```
 
+For https, add:
+```
+<IfModule mod_ssl.c>
+   <VirtualHost *:443>
+      
+      ServerName example.com
+      ServerAlias www.example.com
+       
+      DocumentRoot /var/www/USERNAME/domains/EXAMPLE.COM/httpdocs
+       
+      ErrorLog /var/www/USERNAME/domains/EXAMPLE.COM/logs/error.log
+      CustomLog /var/www/USERNAME/domains/EXAMPLE.COM/logs/access.log combined
+       
+      <Directory /var/www/USERNAME/domains/EXAMPLE.COM/httpdocs>
+         Options -Indexes +FollowSymLinks +MultiViews
+         AllowOverride All
+         Require all granted
+      </Directory>
+       
+      SSLCertificateFile /etc/letsencrypt/live/EXAMPLE.COM/cert.pem
+      SSLCertificateKeyFile /etc/letsencrypt/live/EXAMPLE.COM/privkey.pem
+      Include /etc/letsencrypt/options-ssl-apache.conf
+      SSLCertificateChainFile /etc/letsencrypt/live/EXAMPLE.COM/chain.pem
+      
+   </VirtualHost>
+</IfModule>
+```
+
 Enable virtual host:
 ```
 $ sudo a2ensite example.com.conf
