@@ -84,7 +84,7 @@ Clear all and add:
     ErrorLog ${APACHE_LOG_DIR}/error.log
     CustomLog ${APACHE_LOG_DIR}/access.log combined
     <Directory /var/www/html>
-         Options -Indexes +FollowSymLinks +MultiViews
+        Options -Indexes +FollowSymLinks +MultiViews
         AllowOverride All
         Require all granted
     </Directory>
@@ -109,7 +109,6 @@ $ sudo apt-get -y install mysql-server
 Install PhpMyAdmin, follow the wizard and enable php5-mcrypt:
 ```
 $ sudo apt-get install phpmyadmin
-$ sudo php5enmod mcrypt
 ```
 
 Restart Apache:
@@ -174,19 +173,7 @@ $ sudo mv composer.phar /usr/local/bin/composer
 
 ## Security
 
-### SSL Certificates (not sure)
-
-Create ssl folder:
-```
-$ sudo mkdir /etc/apache2/ssl
-```
-
-Create key following the wizard:
-```
-$ sudo openssl req -x509 -nodes -days 365 -newkey rsa:2048 -keyout /etc/apache2/ssl/apache.key -out /etc/apache2/ssl/apache.crt
-```
-
-### SSL Certificates from Let’s Encrypt (sure)
+### SSL Certificates from Let’s Encrypt
 
 Download the certbot-auto Let’s Encrypt client to the /usr/local/sbin directory
 ```
@@ -257,7 +244,7 @@ Restrict access to directories with “Allow” and “Deny” options :
 
 Open *php.ini* file:
 ```
-$ sudo nano /etc/php5/apache2/php.ini 
+$ sudo nano /etc/php7/apache2/php.ini 
 ```
 
 Set max filesize for upload file:
