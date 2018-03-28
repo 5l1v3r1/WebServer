@@ -326,9 +326,9 @@ Create domain name (EXAMPLE.COM) folder in domains folder:
 $ mkdir /var/www/USERNAME/domains/EXAMPLE.COM
 ```
 
-Create httpdocs, logs and backups folders in EXAMPLE.COM folder:
+Create httpdocs, logs, backups and tmp folders in EXAMPLE.COM folder:
 ```
-$ mkdir -p /var/www/USERNAME/domains/EXAMPLE.COM/{httpdocs,logs,backups}
+$ mkdir -p /var/www/USERNAME/domains/EXAMPLE.COM/{httpdocs,logs,backups,tmp}
 ```
 
 Create index.php file in httpdocs folder and set permissions:
@@ -352,6 +352,11 @@ $ setfacl -R -m g:www-data:rwx /var/www/USERNAME/domains/EXAMPLE.COM/httpdocs
 $ setfacl -Rd -m g:www-data:rwx /var/www/USERNAME/domains/EXAMPLE.COM/httpdocs
 ```
 
+Set 777 permissions for tmp folder:
+```
+$ chmod 0777 /var/www/USERNAME/domains/EXAMPLE.COM/tmp
+```
+
 ### Create Virtual Host
 
 Create *example.com.conf* file:
@@ -372,7 +377,8 @@ Add:
     ErrorLog /var/www/USERNAME/domains/EXAMPLE.COM/logs/error.log
     CustomLog /var/www/USERNAME/domains/EXAMPLE.COM/logs/access.log combined
     
-    php_admin_value open_basedir /var/www/USERNAME/domains/EXAMPLE.COM/httpdocs
+    php_admin_value open_basedir /var/www/USERNAME/domains/EXAMPLE.COM
+    php_admin_value upload_tmp_dir /var/www/USERNAME/domains/EXAMPLE.COM/tmp
     
     <Directory /var/www/USERNAME/domains/EXAMPLE.COM/httpdocs>
         Options -Indexes +FollowSymLinks +MultiViews
@@ -395,7 +401,10 @@ For https, add:
        
       ErrorLog /var/www/USERNAME/domains/EXAMPLE.COM/logs/error.log
       CustomLog /var/www/USERNAME/domains/EXAMPLE.COM/logs/access.log combined
-       
+      
+      php_admin_value open_basedir /var/www/USERNAME/domains/EXAMPLE.COM
+      php_admin_value upload_tmp_dir /var/www/USERNAME/domains/EXAMPLE.COM/tmp
+    
       <Directory /var/www/USERNAME/domains/EXAMPLE.COM/httpdocs>
          Options -Indexes +FollowSymLinks +MultiViews
          AllowOverride All
