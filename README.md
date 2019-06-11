@@ -1,22 +1,18 @@
-# Webserver LAMP - Ubuntu 16.04
+# Webserver LAMP - Ubuntu 18.04
 
 * Software
     * [Apache](https://github.com/davidecesarano/config-webserver-lamp#apache)
-    * [PHP 7](https://github.com/davidecesarano/config-webserver-lamp#php)
+    * [PHP 7](https://github.com/davidecesarano/config-webserver-lamp#php-7)
     * [MySQL](https://github.com/davidecesarano/config-webserver-lamp#mysql)
     * [PhpMyAdmin](https://github.com/davidecesarano/config-webserver-lamp#phpmyadmin)
     * [ACL](https://github.com/davidecesarano/config-webserver-lamp#acl)
     * [Postfix](https://github.com/davidecesarano/config-webserver-lamp#postfix)
     * [SFTP](https://github.com/davidecesarano/config-webserver-lamp#sftp)
     * [Git and Composer](https://github.com/davidecesarano/config-webserver-lamp#git-and-composer)
-* Security
-    * [SSL Certificates from Let's Encrypt (sure)](https://github.com/davidecesarano/config-webserver-lamp#ssl-certificates-from-lets-encrypt-sure)
-    * [Apache](https://github.com/davidecesarano/config-webserver-lamp#apache-1)
-    * [PHP](https://github.com/davidecesarano/config-webserver-lamp#php-1)
-    * [PhpMyAdmin](https://github.com/davidecesarano/config-webserver-lamp#phpmyadmin-1)
-* Users and Domains
+    * [SSL Certificates from Let's Encrypt](https://github.com/davidecesarano/config-webserver-lamp#ssl-certificates-from-lets-encrypt)
+* Users and Virtual Hosts
     * [Create User](https://github.com/davidecesarano/config-webserver-lamp#create-user)
-    * [Create Folders](https://github.com/davidecesarano/config-webserver-lamp#create-folders)
+    * [Create User's Folders](https://github.com/davidecesarano/config-webserver-lamp#create-user-s-folders)
     * [Create Virtual Host](https://github.com/davidecesarano/config-webserver-lamp#create-virtual-host)
     * [Create automatic Backup](#create-automatic-backup)
 
@@ -32,9 +28,7 @@ $ sudo apt-get -y install apache2
 
 Active rewrite, headers and ssl modules:
 ```
-$ sudo a2enmod rewrite
-$ sudo a2enmod headers
-$ sudo a2enmod ssl
+$ sudo a2enmod rewrite headers ssl
 ```
 
 Restart Apache:
@@ -46,22 +40,8 @@ $ sudo service apache2 restart
 
 Install PHP and PHP modules:
 ```
-$ sudo apt-get install software-properties-common
-$ sudo add-apt-repository ppa:ondrej/php
 $ sudo apt-get update
-$ sudo apt install php7.1 libapache2-mod-php7.1 php7.1-common php7.1-mbstring php7.1-xmlrpc php7.1-soap php7.1-gd php7.1-xml php7.1-intl php7.1-mysql php7.1-cli php7.1-mcrypt php7.1-zip php7.1-curl
-```
-
-Open the *dir.conf* file:
-```
-$ sudo nano /etc/apache2/mods-enabled/dir.conf
-```
-
-Move the PHP index file above to the first position after the *DirectoryIndex* specification:
-```
-<IfModule mod_dir.c>
-    DirectoryIndex index.php index.html index.cgi index.pl index.xhtml index.htm
-</IfModule>
+$ sudo apt-get install php libapache2-mod-php
 ```
 
 Create index.php file:
@@ -105,9 +85,11 @@ $ sudo apt-get -y install mysql-server
 
 ### PhpMyAdmin
 
-Install PhpMyAdmin, follow the wizard and enable php5-mcrypt:
+Install PhpMyAdmin, follow the wizard and enable mbstring:
 ```
-$ sudo apt-get install phpmyadmin
+$ sudo apt-get update
+$ sudo apt install phpmyadmin php-mbstring php-gettext
+$ sudo phpenmod mbstring
 ```
 
 Restart Apache:
@@ -115,12 +97,20 @@ Restart Apache:
 $ sudo service apache2 restart
 ```
 
+Create dedicated user to access phpMyAdmin:
+```
+$ mysql -u root -p
+mysql> CREATE USER 'YOURUSERNAME'@'localhost' IDENTIFIED BY 'YOURPASSWORD';
+mysql> GRANT ALL PRIVILEGES ON *.* TO 'YOURUSERNAME'@'localhost' WITH GRANT OPTION;
+mysql> exit
+```
+
 ### ACL		
  		
- Install ACL:		
- ```		
- $ sudo apt-get install acl		
- ```
+Install ACL:		
+```		
+$ sudo apt-get install acl		
+```
 
 ### Postfix
 
@@ -147,12 +137,12 @@ Find *Subsystem*, comment it and add new:
 Subsystem sftp internal-sftp
 ```
 
-After *UsePAM yes* add:
+Next, add the lines below at the end of the file:
 ```
 Match Group sftp
-ChrootDirectory %h/domains/
 X11Forwarding no
 AllowTcpForwarding no
+ChrootDirectory %h/html/vhosts
 ForceCommand internal-sftp
 ```
 
@@ -169,8 +159,6 @@ $ sudo apt-get -y install git
 $ curl -s https://getcomposer.org/installer | php
 $ sudo mv composer.phar /usr/local/bin/composer
 ```
-
-## Security
 
 ### SSL Certificates from Let’s Encrypt
 
@@ -200,185 +188,71 @@ Include the following content:
 30 2 * * 1 /usr/local/sbin/certbot-auto renew >> /var/log/le-renew.log
 ```
 
-### Apache
-
-Open *security.conf* file:
-```
-$ sudo nano /etc/apache2/conf-available/security.conf
-```
-
-Hide Apache version:
-```
-ServerSignature Off
-ServerTokens Prod
-```
-
-Restart Apache:
-```
-$ sudo service apache2 restart
-```
-
-Open *apache2.conf* file:
-```
-sudo nano /etc/apache2/apache2.conf
-```
-
-Disable directory listing:
-```
-<Directory /var/www/html>
-   Options -Indexes
-</Directory>
-```
-
-Restrict access to directories with “Allow” and “Deny” options :
-```
-<Directory />
-   Options None
-   Order deny,allow
-   Deny from all
-</Directory>
-```
-
-### PHP
-
-Open *php.ini* file:
-```
-$ sudo nano /etc/php7/apache2/php.ini 
-```
-
-Set max filesize for upload file:
-```
-post_max_size = 25M
-upload_max_filesize = 25M
-```
-
-Do not expose PHP error messages:
-```
-display_errors = Off
-```
-
-Restrict PHP Information Leakage:
-```
-expose_php = Off
-```
-
-Restart Apache:
-```
-$ sudo service apache2 restart
-```
-
-### PhpMyAdmin
-
-Open the config.inc.php file:
-```
-$ sudo nano /etc/phpmyadmin/config.inc.php
-```
-
-After *$cfg['Servers'][$i]['recent']* add:
-```
-$cfg['Servers'][$i]['hide_db'] = '^information_schema|mysql|performance_schema|phpmyadmin$';
-```
-
-After *$cfg['SaveDir']* add:
-```
-$cfg['ForceSSL'] = true;
-```
-
-Open the *apache.conf* file:
-```
-$ sudo nano /etc/phpmyadmin/apache.conf
-```
-
-Find */phpmyadmin* and replace with:
-```
-Alias /database/domains /usr/share/phpmyadmin
-```
-
-Restart Apache:
-```
-$ sudo service apache2 restart
-```
-
-## Users and Domains
+## Users and Virtual Hosts
 
 ### Create User
 
 Create user, set home folder and add user to www-data and sftp groups:
 ```
-$ useradd -m -d /var/www/USERNAME -s /bin/false -g www-data -G sftp USERNAME
+$ useradd -m -d /var/www/USERNAME -g www-data -G sftp USERNAME
 $ passwd USERNAME
 ```
 
-### Create Folders
+### Create User's Folders
 
 Set root user and root group for home user folder:
 ```
 $ sudo chown root:root /var/www/USERNAME
 ```
 
-Create domains folder in home user folder:
+Create html folder in home user folder e vhosts folder in html folder:
 ```
-$ mkdir /var/www/USERNAME/domains
-```
-
-Create domain name (EXAMPLE.COM) folder in domains folder:
-```
-$ mkdir /var/www/USERNAME/domains/EXAMPLE.COM
+$ mkdir /var/www/USERNAME/html
+$ mkdir /var/www/USERNAME/html/vhosts
 ```
 
-Create httpdocs, logs, backups and tmp folders in EXAMPLE.COM folder:
-```
-$ mkdir -p /var/www/USERNAME/domains/EXAMPLE.COM/{httpdocs,logs,backups,tmp}
-```
-
-Create index.php file in httpdocs folder and set permissions:
-```
-$ sudo touch /var/www/USERNAME/domains/EXAMPLE.COM/httpdocs/index.php
-$ echo "<?php echo '<h1>It\'s Works!</h1>'; ?>" > /var/www/USERNAME/domains/EXAMPLE.COM/httpdocs/index.php
-```
-
-Set permissions to httpdocs folder:
+Set permissions to vhosts folder:
 
 ```
-$ chown -R USERNAME:www-data /var/www/USERNAME/domains/EXAMPLE.COM/httpdocs
+$ chown -R USERNAME:www-data /var/www/USERNAME/html/vhosts
 ```
 
 Set the default user (USERNAME), default group (www-data), 775 permissions for folders and 664 permissions for files with ACL:
 
 ```
-$ setfacl -R -m u:USERNAME:rwx /var/www/USERNAME/domains/EXAMPLE.COM/httpdocs
-$ setfacl -Rd -m u:USERNAME:rwx /var/www/USERNAME/domains/EXAMPLE.COM/httpdocs
-$ setfacl -R -m g:www-data:rwx /var/www/USERNAME/domains/EXAMPLE.COM/httpdocs
-$ setfacl -Rd -m g:www-data:rwx /var/www/USERNAME/domains/EXAMPLE.COM/httpdocs
+$ setfacl -R -m u:USERNAME:rwx /var/www/USERNAME/html/vhosts/*
+$ setfacl -Rd -m u:USERNAME:rwx /var/www/USERNAME/html/vhosts/*
+$ setfacl -R -m g:www-data:rwx /var/www/USERNAME/html/vhosts/*
+$ setfacl -Rd -m g:www-data:rwx /var/www/USERNAME/html/vhosts/*
 ```
 
-Set 777 permissions for tmp folder:
+With your SFTP software you can to create virtual host's folders in vhosts folder. For example:
 ```
-$ chmod 0777 /var/www/USERNAME/domains/EXAMPLE.COM/tmp
+vhosts
+    - example.com
+        - httpdocs
+            - index.php
+            - ...
+        - logs
+    - example2.com
+        - ...
 ```
 
 ### Create Virtual Host
 
 Create *example.com.conf* file:
 ```
-$ sudo nano /etc/apache2/sites-available/example.com.conf
+$ sudo nano /etc/apache2/sites-enabled/example.com.conf
 ```
 
 Add:
 ```
 <VirtualHost *:80>
-    
-    ServerAdmin webmaster@localhost
     ServerName example.com
-    ServerAlias www.example.com
-    
     DocumentRoot /var/www/USERNAME/domains/EXAMPLE.COM/httpdocs
     
     ErrorLog /var/www/USERNAME/domains/EXAMPLE.COM/logs/error.log
     CustomLog /var/www/USERNAME/domains/EXAMPLE.COM/logs/access.log combined
-    
-    php_admin_value open_basedir /var/www/USERNAME/domains/EXAMPLE.COM
-    php_admin_value upload_tmp_dir /var/www/USERNAME/domains/EXAMPLE.COM/tmp
     
     <Directory /var/www/USERNAME/domains/EXAMPLE.COM/httpdocs>
         Options -Indexes +FollowSymLinks +MultiViews
@@ -387,42 +261,6 @@ Add:
     </Directory>
     
 </VirtualHost> 
-```
-
-For https, add:
-```
-<IfModule mod_ssl.c>
-   <VirtualHost *:443>
-      
-      ServerName example.com
-      ServerAlias www.example.com
-       
-      DocumentRoot /var/www/USERNAME/domains/EXAMPLE.COM/httpdocs
-       
-      ErrorLog /var/www/USERNAME/domains/EXAMPLE.COM/logs/error.log
-      CustomLog /var/www/USERNAME/domains/EXAMPLE.COM/logs/access.log combined
-      
-      php_admin_value open_basedir /var/www/USERNAME/domains/EXAMPLE.COM
-      php_admin_value upload_tmp_dir /var/www/USERNAME/domains/EXAMPLE.COM/tmp
-    
-      <Directory /var/www/USERNAME/domains/EXAMPLE.COM/httpdocs>
-         Options -Indexes +FollowSymLinks +MultiViews
-         AllowOverride All
-         Require all granted
-      </Directory>
-       
-      SSLCertificateFile /etc/letsencrypt/live/EXAMPLE.COM/cert.pem
-      SSLCertificateKeyFile /etc/letsencrypt/live/EXAMPLE.COM/privkey.pem
-      Include /etc/letsencrypt/options-ssl-apache.conf
-      SSLCertificateChainFile /etc/letsencrypt/live/EXAMPLE.COM/chain.pem
-      
-   </VirtualHost>
-</IfModule>
-```
-
-Enable virtual host:
-```
-$ sudo a2ensite example.com.conf
 ```
 
 Restart Apache:
